@@ -1,0 +1,51 @@
+name: Test and Build
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-python:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [3.8]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install --no-cache poetry>=1.0.2 twine
+          poetry install
+      - name: Check codestyle
+        run: |
+          poetry run black --check notebooks
+      - name: Test
+        env:
+          COGNITE_CLIENT_SECRET: ${{ secrets.COGNITE_CLIENT_SECRET }}
+          COGNITE_TOKEN_URL: ${{ secrets.COGNITE_TOKEN_URL }}
+          COGNITE_TOKEN_SCOPES: https://greenfield.cognitedata.com/.default
+          COGNITE_CLIENT_ID: ${{ secrets.COGNITE_CLIENT_ID }}
+          COGNITE_PROJECT: coregis-greenfield
+          COGNITE_BASE_URL: https://greenfield.cognitedata.com
+          COGNITE_CLIENT_NAME: geospatial-examples
+        run: |
+          poetry run pytest notebooks --nbval -p no:python --sanitize-with config/doc_sanitize
+      - name: Upload pytest test results
+        uses: actions/upload-artifact@v2
+        with:
+          name: pytest-results-${{ matrix.python }}
+          path: python/.coverage_${{ matrix.python }}.xml
+        if: ${{ always() }}
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: gitleaks-action
+        uses: zricethezav/gitleaks-action@master

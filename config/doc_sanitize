@@ -1,0 +1,3 @@
+[regex1]
+regex: \d{13}
+replace: EPOCH
