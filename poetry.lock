@@ -228,7 +228,7 @@ sympy = ["sympy"]
 
 [[package]]
 name = "cognite-sdk-experimental"
-version = "0.105.0"
+version = "0.106.0"
 description = "Experimental additions to the Python SDK"
 category = "main"
 optional = false
@@ -1611,7 +1611,7 @@ testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "07df64d3394e9dc7253275ad68e82ceaa5ed790d8266143b607e16799e904fc0"
+content-hash = "4d08b8f4527c869c2d532c82e04c428a792fb6073b4ecd467bef7656b40dd492"
 
 [metadata.files]
 affine = [
